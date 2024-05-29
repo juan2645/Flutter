@@ -36,7 +36,7 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  static Color _generateRandomColor() {  // Genera un color aleatorio para las palabras
+  static Color _generateRandomColor() {
     final random = Random();
     return Color.fromARGB(
       255,
@@ -48,7 +48,7 @@ class MyAppState extends ChangeNotifier {
 
   var favorites = <WordPair>[];
 
-  void toggleFavorite() {  // Alterna entre agregar y eliminar una palabra de la lista de favoritos.
+  void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
     } else {
@@ -57,7 +57,7 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFavorite(WordPair favorite) {  // Elimina una palabra de la lista de favoritos.
+  void removeFavorite(WordPair favorite) {
     favorites.remove(favorite);
     notifyListeners();
   }
@@ -82,7 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
         page = FavoritesPage();
         break;
       case 2:
-        page = RotatedFavoritesPage();  // Se agrega en el switch la opcion rotada de favoritos
+        page = RotatedBox(
+          quarterTurns: 3,
+          child: FavoritesPage(),
+        );
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -106,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.rotate_90_degrees_ccw, color: Colors.green),
-                    label: Text('Rotated Favorites'),  // Etiqueta con la opcion Favoritos rotada
+                    label: Text('Rotated Favorites'),
                   ),
                 ],
                 selectedIndex: selectedIndex,
@@ -236,43 +239,6 @@ class FavoritesPage extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-class RotatedFavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-
-    if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
-
-    return RotatedBox(
-      quarterTurns: 3,
-      child: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text('You have '
-                '${appState.favorites.length} favorites:'),
-          ),
-          for (var pair in appState.favorites)
-            ListTile(
-              leading: Icon(Icons.favorite),
-              title: Text(pair.asLowerCase),
-              trailing: IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  appState.removeFavorite(pair);
-                },
-              ),
-            ),
-        ],
-      ),
     );
   }
 }
